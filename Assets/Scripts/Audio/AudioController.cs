@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using YG;
 
 public class AudioController : MonoBehaviour
@@ -29,17 +30,33 @@ public class AudioController : MonoBehaviour
             return;
         }
 
+        SceneManager.sceneLoaded += HandleSceneLoaded;
+
         // Проверяем обязательные ссылки
         ValidateReferences();
 
         // Подписываемся на изменения слайдеров
-        musicSlider.onValueChanged.AddListener(UpdateMusicVolume);
-        sfxSlider.onValueChanged.AddListener(UpdateSfxVolume);
+        BindSliderListeners();
 
         // Загружаем сохранённые значения
         LoadVolumes();
 
         YG2.StickyAdActivity(true);
+    }
+
+    private void OnDestroy()
+    {
+        if (_instance == this)
+        {
+            SceneManager.sceneLoaded -= HandleSceneLoaded;
+        }
+    }
+
+    private void HandleSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        RebindSliders();
+        BindSliderListeners();
+        LoadVolumes();
     }
 
     private void ValidateReferences()
@@ -51,11 +68,50 @@ public class AudioController : MonoBehaviour
         if (buttonClickSound == null) Debug.LogWarning("⚠️ ButtonClickSound не назначен — звук кнопок не будет играть!");
     }
 
+    private void RebindSliders()
+    {
+        if (musicSlider == null)
+        {
+            GameObject musicObject = GameObject.Find("MusicSlider");
+            if (musicObject != null)
+            {
+                musicSlider = musicObject.GetComponent<Slider>();
+            }
+        }
+
+        if (sfxSlider == null)
+        {
+            GameObject sfxObject = GameObject.Find("SfxSlider");
+            if (sfxObject != null)
+            {
+                sfxSlider = sfxObject.GetComponent<Slider>();
+            }
+        }
+    }
+
+    private void BindSliderListeners()
+    {
+        if (musicSlider != null)
+        {
+            musicSlider.onValueChanged.RemoveListener(UpdateMusicVolume);
+            musicSlider.onValueChanged.AddListener(UpdateMusicVolume);
+        }
+
+        if (sfxSlider != null)
+        {
+            sfxSlider.onValueChanged.RemoveListener(UpdateSfxVolume);
+            sfxSlider.onValueChanged.AddListener(UpdateSfxVolume);
+        }
+    }
+
     // ✅ Безопасная установка громкости музыки
     public void UpdateMusicVolume(float value)
     {
         float safeValue = SafeVolume(value);
-        musicSource.volume = safeValue;
+        if (musicSource != null)
+        {
+            musicSource.volume = safeValue;
+        }
         SaveVolume("Music", safeValue);
     }
 
@@ -63,7 +119,10 @@ public class AudioController : MonoBehaviour
     public void UpdateSfxVolume(float value)
     {
         float safeValue = SafeVolume(value);
-        sfxSource.volume = safeValue;
+        if (sfxSource != null)
+        {
+            sfxSource.volume = safeValue;
+        }
         SaveVolume("Sfx", safeValue);
     }
 
@@ -95,12 +154,22 @@ public class AudioController : MonoBehaviour
         float sfxVol = PlayerPrefs.GetFloat("Sfx", 0.5f);
 
         // ✅ Защищаем значения при загрузке
-        musicSlider.value = SafeVolume(musicVol);
-        sfxSlider.value = SafeVolume(sfxVol);
+        float safeMusic = SafeVolume(musicVol);
+        float safeSfx = SafeVolume(sfxVol);
+
+        if (musicSlider != null)
+        {
+            musicSlider.SetValueWithoutNotify(safeMusic);
+        }
+
+        if (sfxSlider != null)
+        {
+            sfxSlider.SetValueWithoutNotify(safeSfx);
+        }
 
         // Принудительно применяем громкость (на случай, если слайдер не вызвал метод)
-        UpdateMusicVolume(musicSlider.value);
-        UpdateSfxVolume(sfxSlider.value);
+        UpdateMusicVolume(safeMusic);
+        UpdateSfxVolume(safeSfx);
 
         Debug.Log($"✅ Громкость загружена: Музыка={musicVol}, Звуки={sfxVol}");
     }

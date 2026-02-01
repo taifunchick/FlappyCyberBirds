@@ -133,6 +133,7 @@ GameObject:
   - component: {fileID: 59588014}
   - component: {fileID: 59588016}
   - component: {fileID: 59588015}
+  - component: {fileID: 9000000000000000002}
   m_Layer: 5
   m_Name: Bg
   m_TagString: Untagged
@@ -179,6 +180,24 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &9000000000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 59588013}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80ec8ab292924f3eb48da461819bf4bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetImages: []
+  backgroundSprites:
+  - {fileID: 21300000, guid: 3e4423658cec3f9438fe948853cf2226, type: 3}
+  - {fileID: 21300000, guid: 6b04d19ef139f7c4fb18761871416046, type: 3}
+  - {fileID: 21300000, guid: 7924c57465a87294593112dd2117c0cb, type: 3}
+  playerPrefsKey: SelectedBackground
   m_Sprite: {fileID: 21300000, guid: 7924c57465a87294593112dd2117c0cb, type: 3}
   m_Type: 0
   m_PreserveAspect: 0

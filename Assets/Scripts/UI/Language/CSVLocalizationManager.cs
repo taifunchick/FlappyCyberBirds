@@ -9,7 +9,7 @@ public class CSVLocalizationManager : MonoBehaviour
 {
     public static CSVLocalizationManager _instance;
     public TextAsset csvFile; 
-    public string[] availableLanguages = { "Russian", "English" }; 
+    public string[] availableLanguages = { "Русский", "English" }; 
     public int currentLanguageIndex = 0; 
     private Dictionary<string, Dictionary<string, string>> localizationData = new Dictionary<string, Dictionary<string, string>>();
 
@@ -31,6 +31,22 @@ public class CSVLocalizationManager : MonoBehaviour
 
         LoadCSV();
         LoadLanguage(); 
+        UpdateLanguageText();
+    }
+
+    private void OnEnable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded += HandleSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        UnityEngine.SceneManagement.SceneManager.sceneLoaded -= HandleSceneLoaded;
+    }
+
+    private void HandleSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
+    {
+        UpdateAllText();
         UpdateLanguageText();
     }
 
