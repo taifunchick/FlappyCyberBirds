@@ -3015,6 +3015,9 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 3e4423658cec3f9438fe948853cf2226, type: 3}
   - {fileID: 21300000, guid: 6b04d19ef139f7c4fb18761871416046, type: 3}
   - {fileID: 21300000, guid: 7924c57465a87294593112dd2117c0cb, type: 3}
+  - {fileID: 21300000, guid: d7366763395e7274580f5fc080311f67, type: 3}
+  - {fileID: 21300000, guid: 18ac39084d7530e4ba8a05ba4a5a4173, type: 3}
+  - {fileID: 21300000, guid: 0d7a8dd16ed1e324481fb751e5683ce7, type: 3}
   playerPrefsKey: SelectedBackground
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

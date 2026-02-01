@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine;
 
 public class SceneLoader : MonoBehaviour
 {
@@ -9,6 +7,7 @@ public class SceneLoader : MonoBehaviour
 
     public void LoadTheScene()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene(sceneName);
     }
 }

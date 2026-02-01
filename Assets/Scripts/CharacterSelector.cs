@@ -1,51 +1,63 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
-using TMPro;
 
 public class CharacterSelector : MonoBehaviour
 {
-    public GameObject[] characterButtons; // Массив кнопок (каждая — Button)
-    public string[] characterNames;       // Имена персонажей (должны совпадать с именами префабов)
-    
+    public GameObject[] characterButtons;
+    public string[] characterNames;
+
     private void Start()
     {
-        // Загружаем последний выбранный персонаж из PlayerPrefs
         string selectedChar = PlayerPrefs.GetString("SelectedCharacter", "");
-        
-        // Обновляем все кнопки
         UpdateButtonStates(selectedChar);
     }
 
     public void OnCharacterSelected(string characterName)
     {
-        // Сохраняем выбор
         PlayerPrefs.SetString("SelectedCharacter", characterName);
         PlayerPrefs.Save();
-        
-        // Обновляем состояние всех кнопок
         UpdateButtonStates(characterName);
     }
 
     private void UpdateButtonStates(string selectedCharacter)
     {
-        if (characterButtons == null || characterNames == null) return;
+        if (characterButtons == null || characterNames == null)
+        {
+            return;
+        }
 
         for (int i = 0; i < characterButtons.Length && i < characterNames.Length; i++)
         {
             Button button = characterButtons[i].GetComponent<Button>();
             string charName = characterNames[i];
-            
+
             if (button != null)
             {
-                button.GetComponentInChildren<TextMeshProUGUI>().text = 
-                    (charName == selectedCharacter) ? "Выбран" : "Выбрать";
-                
-                // Можно добавить визуальное выделение (например, цвет фона)
+                TMP_Text label = button.GetComponentInChildren<TMP_Text>();
+                if (label != null)
+                {
+                    string key = charName == selectedCharacter ? "selected" : "select";
+                    LocalizedText localized = label.GetComponent<LocalizedText>();
+                    if (localized == null)
+                    {
+                        localized = label.gameObject.AddComponent<LocalizedText>();
+                    }
+
+                    localized.SetKey(key);
+                    label.text = GetLocalized(key, key);
+                }
+
                 ColorBlock colors = button.colors;
                 colors.normalColor = (charName == selectedCharacter) ? Color.green : Color.white;
                 button.colors = colors;
             }
         }
+    }
+
+    private static string GetLocalized(string key, string fallback)
+    {
+        var manager = CSVLocalizationManager._instance;
+        return manager != null ? manager.GetText(key) : fallback;
     }
 }

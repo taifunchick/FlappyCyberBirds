@@ -1,36 +1,38 @@
-using UnityEngine;
-using UnityEngine.UI;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq; // Add this for ToArray()
+using System.Linq;
 using TMPro;
+using UnityEngine;
 
 public class CSVLocalizationManager : MonoBehaviour
 {
     public static CSVLocalizationManager _instance;
-    public TextAsset csvFile; 
-    public string[] availableLanguages = { "Русский", "English" }; 
-    public int currentLanguageIndex = 0; 
-    private Dictionary<string, Dictionary<string, string>> localizationData = new Dictionary<string, Dictionary<string, string>>();
+    public TextAsset csvFile;
+    public string[] availableLanguages = { "Русский", "English" };
+    public int currentLanguageIndex;
+    public TextMeshProUGUI languageText;
 
-    public TextMeshProUGUI languageText; 
-    private string currentLanguage; 
+    private readonly Dictionary<string, Dictionary<string, string>> localizationData = new Dictionary<string, Dictionary<string, string>>();
+    private string currentLanguage;
 
-    void Awake()
+    private void Awake()
     {
-        if (_instance == null)
+        if (_instance != null && _instance != this)
         {
-            _instance = this;
-            DontDestroyOnLoad(gameObject);
+            Destroy(_instance.gameObject);
         }
-        else
-        {
-            Destroy(gameObject);
-            return;
-        }
+
+        _instance = this;
+        DontDestroyOnLoad(gameObject);
 
         LoadCSV();
-        LoadLanguage(); 
+        LoadLanguage();
+        UpdateLanguageText();
+    }
+
+    private void Start()
+    {
+        RebindLanguageText();
+        UpdateAllText();
         UpdateLanguageText();
     }
 
@@ -46,6 +48,7 @@ public class CSVLocalizationManager : MonoBehaviour
 
     private void HandleSceneLoaded(UnityEngine.SceneManagement.Scene scene, UnityEngine.SceneManagement.LoadSceneMode mode)
     {
+        RebindLanguageText();
         UpdateAllText();
         UpdateLanguageText();
     }
@@ -104,9 +107,9 @@ public class CSVLocalizationManager : MonoBehaviour
         if (index >= 0 && index < availableLanguages.Length)
         {
             currentLanguageIndex = index;
-            currentLanguage = availableLanguages[currentLanguageIndex]; 
-            SaveLanguage(); 
-            UpdateAllText(); 
+            currentLanguage = availableLanguages[currentLanguageIndex];
+            SaveLanguage();
+            UpdateAllText();
             UpdateLanguageText();
         }
         else
@@ -164,24 +167,53 @@ public class CSVLocalizationManager : MonoBehaviour
             SaveLanguage();
         }
 
-        currentLanguage = availableLanguages[currentLanguageIndex]; 
+        currentLanguage = availableLanguages[currentLanguageIndex];
     }
-
 
     public void UpdateAllText()
     {
-        LocalizedText[] localizedTexts = FindObjectsOfType<LocalizedText>();
-        foreach (LocalizedText textComponent in localizedTexts)
+        TMP_Text[] tmpTexts = FindObjectsOfType<TMP_Text>(true);
+        foreach (TMP_Text tmpText in tmpTexts)
         {
-            textComponent.UpdateText();
+            if (tmpText == null)
+            {
+                continue;
+            }
+
+            LocalizedText localizedText = tmpText.GetComponent<LocalizedText>();
+            if (localizedText == null)
+            {
+                localizedText = tmpText.gameObject.AddComponent<LocalizedText>();
+            }
+
+            if (string.IsNullOrWhiteSpace(localizedText.Key))
+            {
+                localizedText.SetKey(tmpText.text.Trim());
+            }
+
+            localizedText.UpdateText();
         }
     }
 
-    void UpdateLanguageText()
+    private void UpdateLanguageText()
     {
         if (languageText != null)
         {
             languageText.text = availableLanguages[currentLanguageIndex];
+        }
+    }
+
+    private void RebindLanguageText()
+    {
+        if (languageText != null)
+        {
+            return;
+        }
+
+        GameObject languageObject = GameObject.FindWithTag("LanguageText");
+        if (languageObject != null)
+        {
+            languageText = languageObject.GetComponent<TextMeshProUGUI>();
         }
     }
 }
