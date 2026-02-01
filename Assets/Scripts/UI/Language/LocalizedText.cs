@@ -1,26 +1,43 @@
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
+[DisallowMultipleComponent]
+[RequireComponent(typeof(TMP_Text))]
 public class LocalizedText : MonoBehaviour
 {
-    public string key; 
-    private TextMeshProUGUI textComponent;
+    [SerializeField] private string key;
+    private TMP_Text textComponent;
 
-    void Start()
+    public string Key => key;
+
+    private void Awake()
     {
-        textComponent = GetComponent<TextMeshProUGUI>();
+        textComponent = GetComponent<TMP_Text>();
+    }
+
+    private void OnEnable()
+    {
         UpdateText();
+    }
+
+    public void SetKey(string newKey)
+    {
+        key = newKey;
     }
 
     public void UpdateText()
     {
-        if (CSVLocalizationManager._instance != null)
+        if (string.IsNullOrWhiteSpace(key) || textComponent == null)
         {
-            textComponent.text = CSVLocalizationManager._instance.GetText(key);
+            return;
         }
-        else
+
+        var manager = CSVLocalizationManager._instance;
+        if (manager == null)
         {
-            Debug.LogError("CSVLocalizationManager instance not found in the scene!");
+            return;
         }
+
+        textComponent.text = manager.GetText(key);
     }
 }

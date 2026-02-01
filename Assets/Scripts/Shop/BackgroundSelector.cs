@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -69,9 +70,29 @@ public class BackgroundSelector : MonoBehaviour
                 continue;
             }
 
+            TMP_Text label = button.GetComponentInChildren<TMP_Text>();
+            if (label != null)
+            {
+                string key = i == selectedIndex ? "selected" : "select";
+                LocalizedText localized = label.GetComponent<LocalizedText>();
+                if (localized == null)
+                {
+                    localized = label.gameObject.AddComponent<LocalizedText>();
+                }
+
+                localized.SetKey(key);
+                label.text = GetLocalized(key, key);
+            }
+
             ColorBlock colors = button.colors;
             colors.normalColor = (i == selectedIndex) ? Color.green : Color.white;
             button.colors = colors;
         }
+    }
+
+    private static string GetLocalized(string key, string fallback)
+    {
+        var manager = CSVLocalizationManager._instance;
+        return manager != null ? manager.GetText(key) : fallback;
     }
 }

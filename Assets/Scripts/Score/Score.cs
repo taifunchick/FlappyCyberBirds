@@ -1,7 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
+using System.Collections.Generic;
 
 public class Score : MonoBehaviour
 {
@@ -11,20 +10,29 @@ public class Score : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _highScoreText;
 
     private int _score;
+    private readonly List<TextMeshProUGUI> _currentScoreTexts = new List<TextMeshProUGUI>();
+    private readonly List<TextMeshProUGUI> _highScoreTexts = new List<TextMeshProUGUI>();
 
     private void Awake()
     {
         if (_instance == null)
         {
             _instance = this;
+            RegisterTexts(_currentScoreText, _highScoreText);
+        }
+        else if (_instance != this)
+        {
+            _instance.RegisterTexts(_currentScoreText, _highScoreText);
+            enabled = false;
+            Destroy(this);
+            return;
         }
     }
 
     private void Start()
     {
-        _currentScoreText.text = _score.ToString();
-
-        _highScoreText.text = PlayerPrefs.GetInt("HighScore", 0).ToString();
+        UpdateScoreTexts();
+        UpdateHighScoreTexts(PlayerPrefs.GetInt("HighScore", 0));
         UpdateHighScore();
     }
 
@@ -33,14 +41,51 @@ public class Score : MonoBehaviour
         if (_score > PlayerPrefs.GetInt("HighScore"))
         {
             PlayerPrefs.SetInt("HighScore", _score);
-            _highScoreText.text = _score.ToString();
+            UpdateHighScoreTexts(_score);
         }
     }
 
     public void UpdateScore()
     {
         _score++;
-        _currentScoreText.text = _score.ToString();
+        UpdateScoreTexts();
         UpdateHighScore();
+    }
+
+    private void RegisterTexts(TextMeshProUGUI currentScoreText, TextMeshProUGUI highScoreText)
+    {
+        if (currentScoreText != null && !_currentScoreTexts.Contains(currentScoreText))
+        {
+            _currentScoreTexts.Add(currentScoreText);
+        }
+
+        if (highScoreText != null && !_highScoreTexts.Contains(highScoreText))
+        {
+            _highScoreTexts.Add(highScoreText);
+        }
+    }
+
+    private void UpdateScoreTexts()
+    {
+        string scoreValue = _score.ToString();
+        foreach (TextMeshProUGUI text in _currentScoreTexts)
+        {
+            if (text != null)
+            {
+                text.text = scoreValue;
+            }
+        }
+    }
+
+    private void UpdateHighScoreTexts(int value)
+    {
+        string highScoreValue = value.ToString();
+        foreach (TextMeshProUGUI text in _highScoreTexts)
+        {
+            if (text != null)
+            {
+                text.text = highScoreValue;
+            }
+        }
     }
 }

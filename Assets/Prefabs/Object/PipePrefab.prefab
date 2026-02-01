@@ -142,6 +142,7 @@ GameObject:
   - component: {fileID: 142478476241886613}
   - component: {fileID: 8056895277835729606}
   - component: {fileID: 2782307055918150764}
+  - component: {fileID: 9000000000000000001}
   m_Layer: 0
   m_Name: PipePrefab
   m_TagString: Untagged
@@ -236,6 +237,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05b8efbd40d109c49b781242fb7c158a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &9000000000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2592867256589548693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03f0f120ac8249e79f59fb21f02846d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetRenderers: []
+  pipeSprites:
+  - {fileID: 1227806039, guid: ceee15fa7c1701648b35370651261667, type: 3}
+  - {fileID: 1075524758, guid: ceee15fa7c1701648b35370651261667, type: 3}
+  - {fileID: 1830138154, guid: ceee15fa7c1701648b35370651261667, type: 3}
+  - {fileID: 1002189788, guid: ceee15fa7c1701648b35370651261667, type: 3}
+  - {fileID: 510545687, guid: ceee15fa7c1701648b35370651261667, type: 3}
+  - {fileID: -358140321, guid: ceee15fa7c1701648b35370651261667, type: 3}
+  - {fileID: -1302723086, guid: ceee15fa7c1701648b35370651261667, type: 3}
+  - {fileID: -189836583, guid: ceee15fa7c1701648b35370651261667, type: 3}
+  playerPrefsKey: SelectedPipeSkin
 --- !u!1 &3561866571042355807
 GameObject:
   m_ObjectHideFlags: 0
