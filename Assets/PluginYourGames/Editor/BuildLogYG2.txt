@@ -1,3 +1,3 @@
-Build path: D:/Finals/FlappyCyberBirdsV7
-Build number: 16
-PluginYG version: 2.005
+﻿Build path: D:/Unity/Unity Projects/FlappyCyberBirds/test11.apk
+Build number: 17
+PluginYG version: 2.007
